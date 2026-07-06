@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+  <a href="index.html">Home</a>
+  <a href="profile.html">Profile</a>
+  <a href="chat.html">Chat</a>
+  <a href="search.html">Search</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
+
+  <h2>Search</h2>
+
+  <input type="text" id="searchInput" placeholder="Search users or posts...">
+  <button onclick="search()">Search</button>
+
+  <h3>Matching Users</h3>
+  <div id="userResults"></div>
+
+  <h3>Matching Posts</h3>
+  <div id="postResults"></div>
+
+  <a href="profile.html?user_id=123">View Profile</a>
+
+  <script>
+    function logout() {
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
+    async function search() {
+      const query = document.getElementById('searchInput').value;
+
+      // Search users
+      const userRes = await fetch(`http://localhost:3000/api/search/users?q=${query}`);
+      const users = await userRes.json();
+
+      const userResults = document.getElementById('userResults');
+      userResults.innerHTML = '';
+      users.forEach(u => {
+        const div = document.createElement('div');
+        div.innerHTML = `<strong>${u.username}</strong>`;
+        userResults.appendChild(div);
+      });
+
+      // Search posts
+      const postRes = await fetch(`http://localhost:3000/api/search/posts?q=${query}`);
+      const posts = await postRes.json();
+
+      const postResults = document.getElementById('postResults');
+      postResults.innerHTML = '';
+      posts.forEach(p => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <strong>${p.username}:</strong> ${p.content} <br>
+          ${p.image ? `<img src="http://localhost:3000/uploads/${p.image}" width="200">` : ''}
+          <hr>
+        `;
+        postResults.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

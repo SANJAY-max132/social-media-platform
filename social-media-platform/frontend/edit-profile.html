@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Profile</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4ff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+
+  <div style="background: white; padding: 30px 40px; border-radius: 16px; box-shadow: 0 8px 20px rgba(41, 128, 185, 0.25); width: 320px; box-sizing: border-box; text-align: center;">
+    <h2 style="margin-bottom: 24px; font-weight: 700; color: #2a81d1;">✏️ Edit Profile</h2>
+    <form id="editForm" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 18px;">
+
+      <input type="text" name="username" placeholder="New Username" 
+             style="padding: 12px 14px; font-size: 16px; border: 2px solid #2a81d1; border-radius: 10px; outline: none; transition: border-color 0.3s ease;" 
+             onfocus="this.style.borderColor='#27ae60'" onblur="this.style.borderColor='#2a81d1'">
+
+      <input type="password" name="password" placeholder="New Password"
+             style="padding: 12px 14px; font-size: 16px; border: 2px solid #2a81d1; border-radius: 10px; outline: none; transition: border-color 0.3s ease;" 
+             onfocus="this.style.borderColor='#27ae60'" onblur="this.style.borderColor='#2a81d1'">
+
+      <input type="file" name="profile_pic" accept="image/*" 
+             style="padding: 6px 0; font-size: 15px; border-radius: 10px; border: 2px solid #2a81d1; cursor: pointer;">
+
+      <button type="submit" 
+              style="padding: 12px 0; background-color: #2a81d1; color: white; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; font-size: 17px; box-shadow: 0 6px 14px rgba(41, 128, 185, 0.4); transition: background-color 0.3s ease;">
+        Update
+      </button>
+
+    </form>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem('userId');
+
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      fetch(`/api/profile/edit/${userId}`, {
+        method: 'PUT',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        alert(data.message || data.error);
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        alert('Update failed');
+      });
+    });
+  </script>
+</body>
+</html>

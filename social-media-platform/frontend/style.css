@@ -1,0 +1,401 @@
+/* ===== Body ===== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #e8f0fe, #b6d0ff);
+  margin: 0;
+  padding: 10px;
+  min-height: 100vh;
+  display: block;
+  transition: background 1s ease;
+  color: #222;
+}
+
+/* Vertical center and flex layout only on mobile */
+@media (max-width: 600px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #cce4ff, #90bfff);
+  }
+}
+
+/* ===== Containers (form, feed, posts, stats) ===== */
+.form-container,
+.feed-container,
+.post,
+#userStats {
+  max-width: 600px;
+  margin: 20px auto;
+  background: #ffffff;
+  padding: 22px 26px;
+  border-radius: 14px;
+  box-sizing: border-box;
+  box-shadow:
+    0 6px 14px rgba(41, 128, 185, 0.18),
+    0 10px 30px rgba(52, 152, 219, 0.15);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* ===== Inputs, buttons, selects, textareas ===== */
+input, button, select, textarea {
+  padding: 12px 16px;
+  font-size: 17px;
+  margin: 6px 0;
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 2px solid #2a81d1;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-weight: 500;
+  color: #2c3e50;
+  background: #f9fbff;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #27ae60;
+  box-shadow: 0 0 10px #27ae6088;
+  outline: none;
+  background: #e6f4ea;
+}
+
+/* ===== Buttons ===== */
+button {
+  background-color: #2a81d1;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 5px 12px rgba(41, 128, 185, 0.35);
+  padding: 12px 24px;
+}
+
+button:hover {
+  background-color: #1f5ca6;
+  transform: scale(1.06);
+  box-shadow: 0 8px 18px rgba(31, 92, 166, 0.6);
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 9px rgba(31, 92, 166, 0.7);
+}
+
+/* Green buttons variant */
+button.green {
+  background: #27ae60;
+  margin: 5px 5px 0 0;
+  padding: 10px 18px;
+  font-size: 16px;
+  box-shadow: 0 5px 14px rgba(39, 174, 96, 0.5);
+}
+
+button.green:hover {
+  background: #1e8749;
+  transform: scale(1.06);
+  box-shadow: 0 7px 18px rgba(30, 135, 73, 0.7);
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  max-width: 800px;
+  margin: 0 auto 24px auto;
+  display: flex;
+  justify-content: space-around;
+  background-color: #2a81d1;
+  padding: 16px 12px;
+  border-radius: 12px;
+  flex-wrap: wrap;
+  box-shadow: 0 6px 16px rgba(41, 128, 185, 0.35);
+  animation: slideInDown 0.7s ease forwards;
+  user-select: none;
+}
+
+.navbar a {
+  color: #f0f6ff;
+  text-decoration: none;
+  font-weight: 700;
+  margin: 7px 12px;
+  padding: 14px 22px;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.navbar a:hover {
+  background-color: #1f5ca6;
+  transform: scale(1.12);
+  box-shadow: 0 6px 14px rgba(31, 92, 166, 0.6);
+}
+
+/* ===== Post Container ===== */
+.post {
+  box-shadow:
+    0 6px 10px rgba(0, 0, 0, 0.12),
+    0 12px 25px rgba(0, 0, 0, 0.08);
+  margin: 18px auto;
+  padding: 18px 26px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #ffffff, #cfe3ff);
+  max-width: 600px;
+  animation: fadeInUp 0.7s ease forwards;
+  transition: box-shadow 0.3s ease;
+  font-size: 17px;
+  color: #1c2c52;
+}
+
+.post:hover {
+  box-shadow:
+    0 14px 25px rgba(41, 128, 185, 0.38),
+    0 28px 50px rgba(41, 128, 185, 0.26);
+}
+
+/* ===== Comments ===== */
+.comments {
+  margin-top: 20px;
+  background: #d7ebff;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1.5px solid #82b1ff;
+  font-size: 15px;
+  color: #20406b;
+  display: flex;           /* Added: flex for horizontal layout */
+  align-items: center;     /* vertically center */
+}
+
+.comments input {
+  flex: 1;                 /* Take available width */
+  padding: 10px 14px;
+  margin-right: 10px;
+  border-radius: 8px;
+  border: 1.5px solid #2a81d1;
+  transition: box-shadow 0.3s ease;
+  font-weight: 500;
+  text-align: left;
+}
+
+.comments input::placeholder {
+  text-align: center;       /* Center placeholder text */
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.comments input:focus {
+  box-shadow: 0 0 10px #2a81d1cc;
+  outline: none;
+  background: #e6f0ff;
+}
+
+.comments button {
+  padding: 10px 18px;
+  background: #1f5ca6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.comments button:hover {
+  background-color: #163f6d;
+  transform: scale(1.06);
+}
+
+/* ===== Chat Box ===== */
+#chat-box {
+  height: 320px;
+  overflow-y: auto;
+  background: #f0f6ff;
+  padding: 18px 22px;
+  border: 2px solid #2a81d1;
+  margin-top: 20px;
+  border-radius: 16px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 8px 20px rgba(41, 128, 185, 0.25);
+  animation: fadeIn 0.7s ease forwards;
+  font-size: 16px;
+  color: #1b3a6b;
+  font-weight: 600;
+}
+
+/* ===== Search Input Styling (add class="search" to your input) ===== */
+input.search {
+  max-width: 350px;
+  margin: 20px auto;
+  display: block;
+  padding: 12px 18px;
+  font-size: 16px;
+  border: 2px solid #2a81d1;
+  border-radius: 25px;
+  background: #eaf2fb;
+  color: #34495e;
+  text-align: center;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+input.search::placeholder {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+input.search:focus {
+  border-color: #27ae60;
+  background: #d0f0d8;
+  outline: none;
+}
+
+/* ===== Profile Section Styling ===== */
+.profile-container {
+  max-width: 400px;
+  margin: 20px auto;
+  background: linear-gradient(135deg, #74ebd5, #9face6);
+  padding: 25px 20px;
+  border-radius: 16px;
+  box-shadow:
+    0 8px 20px rgba(41, 128, 185, 0.3),
+    0 12px 35px rgba(52, 152, 219, 0.25);
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* ===== Notification Box (unique style) ===== */
+.notif-box {
+  position: absolute;
+  top: 60px;
+  right: 16px;
+  background: #fff9db; /* light creamy yellow */
+  border: 2px solid #f4c150; /* golden amber */
+  padding: 18px;
+  max-height: 320px;
+  overflow-y: auto;
+  width: 320px;
+  box-shadow:
+    0 10px 28px rgba(244, 193, 80, 0.5);
+  z-index: 1000;
+  border-radius: 16px;
+  animation: slideInRight 0.5s ease forwards;
+  font-weight: 600;
+  color: #856404; /* dark yellow/brown */
+  font-size: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.notif-box p {
+  margin: 12px 0;
+  border-bottom: 1.5px solid #f8e9b8;
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notif-box p::before {
+  content: "⚡"; /* lightning bolt icon */
+  color: #f4c150;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* ===== Responsive adjustments for mobile ===== */
+@media (max-width: 600px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .navbar a {
+    width: 100%;
+    text-align: center;
+  }
+  
+  input, button, textarea {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .post {
+    margin: 12px;
+  }
+  
+  #chat-box {
+    height: 260px;
+  }
+  
+  h2, h3 {
+    font-size: 18px;
+  }
+}
+
+/* ===== Animations ===== */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@keyframes slideInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ===== Post Card Variant ===== */
+.post-card {
+  border: 1.8px solid #6ba0f7;
+  padding: 14px;
+  margin-bottom: 22px;
+  border-radius: 14px;
+  background: #d6e4ff;
+  box-shadow: 0 6px 18px rgba(54, 107, 250, 0.25);
+  color: #1a2c6d;
+  font-weight: 600;
+  font-size: 16px;
+  transition: box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  box-shadow: 0 12px 28px rgba(46, 99, 250, 0.4);
+}

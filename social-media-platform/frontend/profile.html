@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+  
+  
+    .edit-btn {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 6px 12px;
+      background-color: #1877f2;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+
+    
+  </style>
+</head>
+<body>
+<div id="saved-posts"></div>
+
+  <div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="profile.html">Profile</a>
+    <a href="chat.html">Chat</a>
+    <a href="search.html">Search</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+  <div class="profile-container">
+    <div class="profile-header">
+      <img id="profile-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUuR6lY1HPFS4Q_R2A5r70ECdchXmR_n1b8g&s" alt="Profile Image">
+      <div>
+        <h2 id="username">Username</h2>
+        <div class="profile-stats">
+          <span id="followers-count">0</span> Followers •
+          <span id="following-count">0</span> Following
+        </div>
+        <button id="follow-btn" style="display:none;">Follow</button>
+      </div>
+    </div>
+
+    <a class="edit-btn" href="edit-profile.html">✏️ Edit Profile</a>
+
+    <div class="posts-section">
+      <h3>Posts</h3>
+      <div id="user-posts"></div>
+    </div>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) window.location.href = 'login.html';
+
+    const params = new URLSearchParams(window.location.search);
+    const viewedUserId = params.get('user_id');
+    const isOwnProfile = !viewedUserId || viewedUserId == user.id;
+    const targetUserId = viewedUserId || user.id;
+
+    document.getElementById('username').textContent = user.username;
+
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    async function loadUserPosts(uid) {
+      const res = await fetch(`http://localhost:3000/api/posts/user/${uid}`);
+      const posts = await res.json();
+      const container = document.getElementById('user-posts');
+      container.innerHTML = '';
+      posts.forEach(post => {
+        const div = document.createElement('div');
+        div.className = 'post';
+        div.innerHTML = `
+          <p>${post.content}</p>
+          ${post.image ? `<img src="http://localhost:3000/uploads/${post.image}" width="200">` : ''}
+          <button class="bookmark-btn" data-post-id="${post.id}">🔖 Save</button>
+          <hr>`;
+        container.appendChild(div);
+      });
+
+      setupBookmarkButtons();
+    }
+
+    async function loadFollowData(uid) {
+      const [followers, following] = await Promise.all([
+        fetch(`http://localhost:3000/api/follow/followers/${uid}`).then(res => res.json()),
+        fetch(`http://localhost:3000/api/follow/following/${uid}`).then(res => res.json())
+      ]);
+      document.getElementById('followers-count').textContent = followers.length;
+      document.getElementById('following-count').textContent = following.length;
+
+      if (!isOwnProfile) checkIfFollowing(user.id, uid);
+    }
+
+    async function checkIfFollowing(followerId, followingId) {
+      const res = await fetch(`http://localhost:3000/api/follow/following/${followerId}`);
+      const data = await res.json();
+      const isFollowing = data.some(u => u.id == followingId);
+      updateFollowBtn(isFollowing);
+    }
+
+    function updateFollowBtn(isFollowing) {
+      const btn = document.getElementById('follow-btn');
+      btn.style.display = 'inline-block';
+      if (isFollowing) {
+        btn.textContent = 'Unfollow';
+        btn.classList.add('unfollow');
+      } else {
+        btn.textContent = 'Follow';
+        btn.classList.remove('unfollow');
+      }
+    }
+
+    document.getElementById('follow-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('follow-btn');
+      const isUnfollow = btn.classList.contains('unfollow');
+      const endpoint = isUnfollow ? '/api/follow/unfollow' : '/api/follow/follow';
+
+      await fetch(`http://localhost:3000${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ follower_id: user.id, following_id: viewedUserId })
+      });
+
+      updateFollowBtn(!isUnfollow);
+      loadFollowData(viewedUserId);
+    });
+
+    function setupBookmarkButtons() {
+      document.querySelectorAll('.bookmark-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const postId = btn.getAttribute('data-post-id');
+          const action = btn.classList.contains('saved') ? 'unsave' : 'save';
+          const method = action === 'save' ? 'POST' : 'DELETE';
+
+          const res = await fetch(`/api/posts/${action}/${postId}`, {
+            method,
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+          });
+
+          if (res.ok) {
+            btn.classList.toggle('saved');
+            btn.textContent = btn.classList.contains('saved') ? '✅ Saved' : '🔖 Save';
+          }
+        });
+      });
+    }
+
+    // Load profile data
+    loadUserPosts(targetUserId);
+    loadFollowData(targetUserId);
+
+     async function fetchSavedPosts() {
+    try {
+      const res = await fetch('http://localhost:3000/api/posts/saved', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      const saved = await res.json();
+      const savedDiv = document.getElementById('saved-posts');
+      savedDiv.innerHTML = '';
+
+      saved.forEach(post => {
+        const postCard = document.createElement('div');
+        postCard.classList.add('post-card');
+        postCard.innerHTML = `
+          <h3>@${post.username}</h3>
+          <img src="${post.image}" alt="post image"><br>
+          <p>${post.content}</p>
+        `;
+        savedDiv.appendChild(postCard);
+      });
+    } catch (err) {
+      console.error('Failed to fetch saved posts:', err);
+    }
+  }
+
+  // Call this on load or button click
+  // window.onload = fetchSavedPosts;
+  </script>
+</body>
+</html>

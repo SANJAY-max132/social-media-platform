@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Messages</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="profile.html">Profile</a>
+    <a href="chat.html">Chat</a>
+    <a href="search.html">Search</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+  <h2>Send a Message</h2>
+
+  <label for="receiver">Send To:</label>
+  <select id="receiver"></select>
+  <br><br>
+
+  <input type="text" id="message" placeholder="Enter message">
+  <button onclick="sendMessage()">Send</button>
+
+  <h3>Chat Messages</h3>
+  <div id="chat-box"></div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    let selectedReceiver = null;
+
+    async function loadUsers() {
+      const res = await fetch('http://localhost:3000/api/users');
+      const users = await res.json();
+      const receiverSelect = document.getElementById('receiver');
+
+      users.forEach(u => {
+        if (u.id !== user.id) {
+          const option = document.createElement('option');
+          option.value = u.id;
+          option.textContent = u.username;
+          receiverSelect.appendChild(option);
+        }
+      });
+
+      receiverSelect.addEventListener('change', () => {
+        selectedReceiver = receiverSelect.value;
+        loadMessages();
+      });
+
+      selectedReceiver = receiverSelect.value;
+      loadMessages();
+    }
+
+    async function sendMessage() {
+      const text = document.getElementById('message').value;
+      if (!text || !selectedReceiver) return;
+
+      await fetch('http://localhost:3000/api/messages/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender_id: user.id,
+          receiver_id: selectedReceiver,
+          text
+        })
+      });
+
+      document.getElementById('message').value = '';
+      loadMessages();
+    }
+
+    async function loadMessages() {
+      if (!selectedReceiver) return;
+
+      const res = await fetch(`http://localhost:3000/api/messages/chat/${user.id}/${selectedReceiver}`);
+      const messages = await res.json();
+
+      const box = document.getElementById('chat-box');
+      box.innerHTML = '';
+      messages.forEach(m => {
+        const div = document.createElement('div');
+        div.classList.add('message');
+        div.innerHTML = `<strong>${m.sender_name}:</strong> ${m.text} <br>`;
+        box.appendChild(div);
+      });
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>
